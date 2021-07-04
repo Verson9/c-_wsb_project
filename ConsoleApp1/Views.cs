@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography;
 using ConsoleApp1.objects;
 using ConsoleApp1.services;
@@ -13,7 +15,7 @@ namespace ConsoleApp1
             Console.WriteLine("Main Menu:\n" +
                               "1.Rent a Car\n" +
                               "2.Show Renting List\n" +
-                              "3.Admin Profile" +
+                              "3.Admin Profile\n" +
                               "4.Quit\n" +
                               "Select your choice by typing a number");
             switch (Console.ReadLine())
@@ -36,17 +38,17 @@ namespace ConsoleApp1
         private void RentMenu()
         {
             Console.WriteLine("---------------Renting Process--------------");
-            var client = InputClientDta();
-            var clientVehicleTypeChoice = ClientVehicleTypeChoice();
-            var clientVehicleChoice = ClientVehicleChoice(clientVehicleTypeChoice);
+            var client = InputClientData();
+            var clientVehicleTypeChoice = VehicleTypeChoice();
+            var clientVehicleChoice = GetAvailableVehicleOfTypeChoice(clientVehicleTypeChoice);
             var clientVehicleRentingDate = ClientVehicleRentingDateInput();
             var clientVehicleReturnDate = ClientVehicleReturnDateInput();
-            FileService.WriteToRentingsFile(client.GetName() + "_" + client.GetSurname()  );
+            RentingService.CreateRenting(client, clientVehicleChoice,clientVehicleRentingDate, clientVehicleReturnDate);
             Console.Clear();
             MainMenu();
         }
 
-        private Client InputClientDta()
+        private Client InputClientData()
         {
             Console.WriteLine("Input your name:");
             var clientName = Console.ReadLine();
@@ -56,7 +58,7 @@ namespace ConsoleApp1
             
         }
 
-        private string ClientVehicleTypeChoice()
+        private string VehicleTypeChoice()
         {
             Console.WriteLine("Choose type of ca you want to rent\n" +
                               "1.Normal Car\n" +
@@ -64,52 +66,70 @@ namespace ConsoleApp1
                               "3.Pick-Up Truck");
             return Console.ReadLine() switch
             {
-                "1" => "vehicle",
-                "2" => "muscle",
-                "3" => "pickup",
-                _ => ClientVehicleTypeChoice()
+                "1" => "Normal",
+                "2" => "Muscle",
+                "3" => "PickUp",
+                _ => VehicleTypeChoice()
             };
         }
 
-        private string ClientVehicleChoice(string vehicleType)
+        private DateTime ClientVehicleRentingDateInput()
         {
-            List<string> vehiclesOfChoosenType = new List<string>();
-            var vehiclesList = FileService.ReadVehiclesFile();
-            foreach (var vehicle in vehiclesList)
+            Console.WriteLine("When do you want to borrow the car\n" +
+                              "USE YYYY-MM-DD Format");
+            var dateAsString = Console.ReadLine();
+            DateTime rentingDate;
+            try
             {
-                if (vehicle.Contains(vehicleType) && vehicle.Contains("true"))
-                {
-                    vehiclesList.Add(vehicle);
-                }
+                rentingDate = DateTime.Parse(dateAsString!);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Unable to convert your input");
+                return ClientVehicleRentingDateInput();
+            }
+            return rentingDate;
+        }
+
+        private DateTime ClientVehicleReturnDateInput()
+        {
+            Console.WriteLine("When do you want to return the car\n" +
+                              "USE YYYY-MM-DD Format");
+            var dateAsString = Console.ReadLine();
+            DateTime returnDate;
+            try
+            {
+                returnDate = DateTime.Parse(dateAsString!);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Unable to convert your input");
+                return ClientVehicleReturnDateInput();
+            }
+            return returnDate;
+        }
+        private Vehicle GetAvailableVehicleOfTypeChoice(string clientVehicleTypeChoice)
+        {
+            List<Vehicle> availableVehiclesOfChoosenTypeList = VehicleService.GetAvailableVehiclesOfChoosenType(clientVehicleTypeChoice);
+
+            if (availableVehiclesOfChoosenTypeList.Any())
+            {
+                Console.WriteLine("We are truly Sorry but we dont have available vehicles of your choice right now.\n" +
+                                  "Now you will be moved to the main menu.");
+                MainMenu();
             }
             Console.WriteLine("Choose the car by typing its number");
-            for (int i = 1; i < vehiclesOfChoosenType.Count + 1; i++)
+            for (int i = 1; i < availableVehiclesOfChoosenTypeList.Count + 1; i++)
             {
-                Console.WriteLine(i + vehiclesOfChoosenType[i-1]);
+                Console.WriteLine(i+ ". " + availableVehiclesOfChoosenTypeList[i-1].ToString());
             }
-
+        
             var clientVehicleChoice = int.Parse(Console.ReadLine());
-            var choosenVehicle = vehiclesOfChoosenType[clientVehicleChoice - 1];
+            var choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
             return choosenVehicle;
         }
-
-        private string ClientVehicleRentingDateInput()
-        {
-            //TODO
-            Console.WriteLine("NOT AVAILABLE YET!");
-            MainMenu();
-            return "";
-        }
-
-        private string ClientVehicleReturnDateInput()
-        {
-            //TODO
-            Console.WriteLine("NOT AVAILABLE YET!");
-            MainMenu();
-            return "";
-        }
         
-//----------------------------------------------------------------------------------------------------------------------
+//-----------------RENTING LIST DISPLAYING
         private void RentingList()
         {
             Console.WriteLine("---------------Renting List Downloading--------------");
@@ -119,14 +139,82 @@ namespace ConsoleApp1
             Console.ReadLine();
             MainMenu();
         }
+//-----------------ADMIN MENU
 
         private void AdminMenu()
         {
-            //TODO
-            Console.WriteLine("NOT AVAILABLE YET!");
+            Console.WriteLine("Welcome in ADMIN MENU\n" +
+                              "Make a choice by typing a number below.\n" +
+                              "1.Display rentings\n" +
+                              "2.Add a Car\n");
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    Console.WriteLine("NOT AVAILABLE YET");
+                    MainMenu();
+                    break;
+                case "2":
+                    CreateVehicle();
+                    break;
+            }
+        }
+
+        private void CreateVehicle()
+        {
+            var vehicleTypeChoice = VehicleTypeChoice();
+            var productionYear = ProductionYearInput();
+            var odometer = OdometerInput();
+            VehicleService.CreateVehicle(vehicleTypeChoice, productionYear, odometer);
             MainMenu();
         }
-//----------------------------------------------------------------------------------------------------------------------
+
+        private string ProductionYearInput()
+        {
+            Console.WriteLine("Input production year:");
+            var productionYearAsString =Console.ReadLine();
+            double productionYear;
+            try
+            {
+                productionYear =double.Parse(productionYearAsString);
+                if (productionYear < 2019 || productionYear > DateTime.Now.Year)
+                {
+                    Console.WriteLine("Bad input!");
+                    return ProductionYearInput();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Bad input!");
+                return ProductionYearInput();
+            }
+
+            return productionYear.ToString(CultureInfo.InvariantCulture);
+        }
+        
+        private double OdometerInput()
+        {
+            Console.WriteLine("Input actual value of odometer:");
+            var odometerAsString =Console.ReadLine();
+            double odometer;
+            try
+            {
+                odometer =double.Parse(odometerAsString);
+                if (odometer < 0 )
+                {
+                    Console.WriteLine("Bad input!");
+                    return OdometerInput();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Bad input!");
+                return OdometerInput();
+            }
+
+            return odometer;
+        }
+
+//-----------------QUIT
         private void Quit()
         {
             Console.WriteLine("---------------Quiting Process--------------");

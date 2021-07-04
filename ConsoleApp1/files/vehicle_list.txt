@@ -1,0 +1,3 @@
+Normal_Fiat_Tipo_100_200_2020_200000_True
+PickUp_Ford_Ranger_200_400_2021_1000_True
+Normal_Fiat_Tipo_100_200_2021_0_True

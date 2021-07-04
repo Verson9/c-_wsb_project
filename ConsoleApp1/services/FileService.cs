@@ -6,8 +6,8 @@ namespace ConsoleApp1.services
 {
     public static class FileService
     {
-        private const string RentingFilepath = @"C:\Users\przem\RiderProjects\ConsoleApp1\ConsoleApp1\files\renting_data.txt";
-        private const string VehiclesFilepath = @"C:\Users\przem\RiderProjects\ConsoleApp1\ConsoleApp1\files\vehicle_list.txt";
+        private const string RentingFilepath = @"C:\Users\przem\Desktop\C#\ConsoleApp1\ConsoleApp1\files\renting_data.txt";
+        private const string VehiclesFilepath = @"C:\Users\przem\Desktop\C#\ConsoleApp1\ConsoleApp1\files\vehicle_list.txt";
 
         public static List<string> ReadRentingsFile()
         {

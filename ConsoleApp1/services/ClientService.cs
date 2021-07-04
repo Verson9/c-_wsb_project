@@ -1,6 +1,6 @@
 using ConsoleApp1.objects;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.services
 {
     public static class ClientService
     {

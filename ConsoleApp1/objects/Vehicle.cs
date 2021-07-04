@@ -4,11 +4,11 @@ namespace ConsoleApp1.objects
     {
         protected string Brand;
         protected string Model;
-        protected string ProductionDate = "2019";
+        protected string ProductionDate;
         protected double Value;
         protected double Depreciation;
-        protected double Odometer = 0;
-        protected bool Available = true;
+        protected double Odometer;
+        protected bool Available;
 
         public string GetBrand()
         {
@@ -48,22 +48,28 @@ namespace ConsoleApp1.objects
         }
 
 //----------CONSTRUCTORS----------------------------------------
-        public Vehicle(string productionDate, double odometer, bool available)
+        protected Vehicle(string productionDate, double odometer, bool available)
         {
             ProductionDate = productionDate;
             Odometer = odometer;
             Available = available;
+            
         }
-
-        public Vehicle(string productionDate, double odometer)
+        protected Vehicle(string productionDate, double odometer)
         {
             ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = true;
+        }
+        protected Vehicle(double odometer)
+        {
+            ProductionDate = "2019";
             Odometer = odometer;
         }
 //-----------TO STRING-----------------------------------------
         public override string ToString()
         {
-            return "base.ToString();";
+            return GetType().Name + "_" + Brand + "_" + Model + "_" + Value + "_" + Depreciation + "_" + ProductionDate + "_" + Odometer + "_" + Available;
         }
     }
 //----------NORMAL----------------------------------------------
@@ -75,6 +81,9 @@ namespace ConsoleApp1.objects
             Model = "Tipo";
             Value = 100;
             Depreciation = 200;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = available;
         }
 
         public Normal(string productionDate, double odometer) : base(productionDate, odometer)
@@ -83,6 +92,9 @@ namespace ConsoleApp1.objects
             Model = "Tipo";
             Value = 100;
             Depreciation = 200;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = true;
         }
     }
     //----------MUSCLE----------------------------------------------
@@ -94,6 +106,9 @@ namespace ConsoleApp1.objects
             Model = "Mustang GT";
             Value = 150;
             Depreciation = 300;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = available;
         }
 
         public Muscle(string productionDate, double odometer) : base(productionDate, odometer)
@@ -102,6 +117,9 @@ namespace ConsoleApp1.objects
             Model = "Mustang GT";
             Value = 150;
             Depreciation = 300;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = true;
         }
     }
 //----------PICK UP----------------------------------------------
@@ -113,6 +131,9 @@ namespace ConsoleApp1.objects
             Model = "Ranger";
             Value = 200;
             Depreciation = 400;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = available;
         }
 
         public PickUp(string productionDate, double odometer) : base(productionDate, odometer)
@@ -121,6 +142,9 @@ namespace ConsoleApp1.objects
             Model = "Ranger";
             Value = 200;
             Depreciation = 400;
+            ProductionDate = productionDate;
+            Odometer = odometer;
+            Available = true;
         }
     }
 }

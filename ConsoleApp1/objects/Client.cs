@@ -14,5 +14,10 @@ namespace ConsoleApp1.objects
             _name = name;
             _surname = surname;
         }
+
+        public override string ToString()
+        {
+            return _name + "_" + _surname;
+        }
     }
 }

@@ -12,9 +12,13 @@ namespace ConsoleApp1
         }
     }
 }
-//TODO Check if its even working xD
-//TODO Client Service
-//TODO Change views to show vehicles as objects not as strings
-//TODO Renting Service
-//TODO MUCH MORE KURWA JEGO MAć!!!
+//TODO check wprowadzania danych
+//TODO dodanie zmiany w pliku "vehicle_list.txt" z true na false i odwrotnie
+//TODO zmiana daty produkcji na DateTime
+//TODO sprawdzenie o co chodzi z wysyłaniem do Main -args ????
+//TODO sprawdzenie listy wypożyczeń wg imienia i nazwiska klienta
+//                  NO I BĘDZIE GICIO
+
+
+//oby...................................................................................................................
 

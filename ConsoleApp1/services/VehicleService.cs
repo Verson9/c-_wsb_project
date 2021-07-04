@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using ConsoleApp1.objects;
 
 namespace ConsoleApp1.services
 {
     public class VehicleService
     {
-        public List<Vehicle> getVehicles()
+        public static List<Vehicle> GetVehicles()
         {
             var vehiclesListAsStrings = FileService.ReadVehiclesFile();
             var vehiclesList = new List<Vehicle>();
@@ -21,31 +23,21 @@ namespace ConsoleApp1.services
                 var depreciation = vehicleDataAsArray[5];
                 var odometer = vehicleDataAsArray[6];
                 var available = vehicleDataAsArray[7];
-                Vehicle vehicle;
-                switch (type)
+                Vehicle vehicle = type switch
                 {
-                    case "normal":
-                        vehicle = new Normal(productionDate, double.Parse(odometer), Boolean.Parse(available));
-                        break;
-                    case "muscle":
-                        vehicle = new Muscle(productionDate, double.Parse(odometer), Boolean.Parse(available));
-                        break;
-                    case "pickup":
-                        vehicle = new PickUp(productionDate, double.Parse(odometer), Boolean.Parse(available));
-                        break;
-                    default:
-                        vehicle = null;
-                        break;
-                }
-
+                    "Normal" => new Normal(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                    "Muscle" => new Muscle(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                    "PickUp" => new PickUp(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                    _ => null
+                };
                 vehiclesList.Add(vehicle);
             }
             return vehiclesList;
         }
 
-        public List<Vehicle> getAvailableVehicles()
+        public static List<Vehicle> GetAvailableVehicles()
         {
-            List<Vehicle> vehiclesList = getVehicles();
+            List<Vehicle> vehiclesList = GetVehicles();
             var availableVehicles = new List<Vehicle>();
             foreach (var vehicle in vehiclesList)
             {
@@ -55,6 +47,38 @@ namespace ConsoleApp1.services
                 }
             }
             return availableVehicles;
+        }
+
+        public static List<Vehicle> GetAvailableVehiclesOfChoosenType(string type)
+        {
+            var availableVehicles = GetAvailableVehicles();
+            var availableVehiclesOfChoosenType = new List<Vehicle>();
+            foreach (var availableVehicle in availableVehicles)
+            {
+                if (availableVehicle.GetType().Name == type)
+                {
+                    availableVehiclesOfChoosenType.Add(availableVehicle);
+                }
+            }
+            return availableVehiclesOfChoosenType;
+        }
+
+        public static void CreateVehicle(string type, string productionYear, double odometer)
+        {
+            Vehicle newVehicle = null;
+            switch (type)
+            {
+                case "Normal":
+                    newVehicle = new Normal(productionYear, odometer);
+                    break;
+                case "Muscle":
+                    newVehicle = new Muscle(productionYear, odometer);
+                    break;
+                case "PickUp":
+                    newVehicle = new PickUp(productionYear, odometer);
+                    break;
+            }
+            FileService.WriteToVehiclesFile(newVehicle.ToString());
         }
     }
 }
