@@ -54,6 +54,10 @@ namespace ConsoleApp1.services
         {
             var rentingDays = returnDate.Subtract(rentingDate).TotalDays;
             var cost = rentingDays * vehicle.GetValue();
+            if (returnDate<DateTime.ParseExact("2021-06-26","yyyy-MM-dd", CultureInfo.InvariantCulture))
+            {
+                cost = cost * 0.75;
+            }
             return cost;
         }
     }

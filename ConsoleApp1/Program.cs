@@ -9,10 +9,6 @@
         }
     }
 }
-//TODO check wprowadzania danych
-//TODO dodanie zmiany w pliku "vehicle_list.txt" z true na false i odwrotnie
-//TODO zmiana daty produkcji na DateTime
-//TODO sprawdzenie o co chodzi z wysyłaniem do Main -args ????
-//TODO sprawdzenie listy wypożyczeń wg imienia i nazwiska klienta
-//                  NO I BĘDZIE GICIO
-
+//TODO 01.03.2021-26.06.2021 wprowadzić zniżkę dla różnych kompilacji wynajmu
+//TODO ustawić działanie list bez żadnych itemów
+//TODO ograniczyć dostęp do idiotyzmów
