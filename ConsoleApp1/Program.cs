@@ -1,14 +1,11 @@
-﻿using System;
-
-namespace ConsoleApp1
+﻿namespace ConsoleApp1
 {
     public static class Program
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("---------------Program Starting--------------");
             var views = new Views();
-            views.MainMenu();
+            views.Start();
         }
     }
 }
@@ -18,7 +15,4 @@ namespace ConsoleApp1
 //TODO sprawdzenie o co chodzi z wysyłaniem do Main -args ????
 //TODO sprawdzenie listy wypożyczeń wg imienia i nazwiska klienta
 //                  NO I BĘDZIE GICIO
-
-
-//oby...................................................................................................................
 

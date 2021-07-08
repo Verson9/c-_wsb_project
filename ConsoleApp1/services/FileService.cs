@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ConsoleApp1.objects;
 
 namespace ConsoleApp1.services
 {
@@ -15,9 +16,14 @@ namespace ConsoleApp1.services
             return fileLines;
         }
 
-        public static void WriteToRentingsFile(string line)
+        public static void WriteToRentingsFile(List<Renting> rentingsList)
         {
-            File.AppendAllText(RentingFilepath, "\n"+line);
+            string rentingsAsString = null;
+            foreach (var renting in rentingsList)
+            {
+                rentingsAsString = renting.ToString() + "\n";
+            }
+            File.AppendAllText(RentingFilepath, rentingsAsString);
         }
         
         public static List<string> ReadVehiclesFile()
@@ -26,15 +32,14 @@ namespace ConsoleApp1.services
             return fileLines;
         }
 
-        public static void WriteToVehiclesFile(string line)
+        public static void WriteToVehiclesFile(List<Vehicle> vehiclesList)
         {
-            File.AppendAllText(VehiclesFilepath, "\n"+line);
-        }
-
-        public static void ReWriteVehiclesFile(List<string> vehiclesList)
-        {
-            var vehiclesListString = vehiclesList.Aggregate("", (current, vehicle) => current + (vehicle + '\n'));
-            File.WriteAllText(VehiclesFilepath, vehiclesListString);
+            string vehiclesAsString = null;
+            foreach (var vehicle in vehiclesList)
+            {
+                vehiclesAsString = vehicle.ToString() + "\n";
+            }
+            File.WriteAllText(VehiclesFilepath, vehiclesAsString);
         }
     }
 }

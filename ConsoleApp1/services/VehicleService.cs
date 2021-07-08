@@ -32,12 +32,12 @@ namespace ConsoleApp1.services
                 };
                 vehiclesList.Add(vehicle);
             }
+
             return vehiclesList;
         }
 
-        public static List<Vehicle> GetAvailableVehicles()
+        public static List<Vehicle> GetAvailableVehicles(List<Vehicle> vehiclesList)
         {
-            List<Vehicle> vehiclesList = GetVehicles();
             var availableVehicles = new List<Vehicle>();
             foreach (var vehicle in vehiclesList)
             {
@@ -49,9 +49,9 @@ namespace ConsoleApp1.services
             return availableVehicles;
         }
 
-        public static List<Vehicle> GetAvailableVehiclesOfChoosenType(string type)
+        public static List<Vehicle> GetAvailableVehiclesOfChoosenType(string type, List<Vehicle> vehiclesList)
         {
-            var availableVehicles = GetAvailableVehicles();
+            var availableVehicles = GetAvailableVehicles(vehiclesList);
             var availableVehiclesOfChoosenType = new List<Vehicle>();
             foreach (var availableVehicle in availableVehicles)
             {
@@ -63,22 +63,39 @@ namespace ConsoleApp1.services
             return availableVehiclesOfChoosenType;
         }
 
-        public static void CreateVehicle(string type, string productionYear, double odometer)
+        public static void RentChosenVehicle(Vehicle chosenVehicle, List<Vehicle> vehiclesList)
         {
-            Vehicle newVehicle = null;
-            switch (type)
+            foreach (var vehicle in vehiclesList)
             {
-                case "Normal":
-                    newVehicle = new Normal(productionYear, odometer);
-                    break;
-                case "Muscle":
-                    newVehicle = new Muscle(productionYear, odometer);
-                    break;
-                case "PickUp":
-                    newVehicle = new PickUp(productionYear, odometer);
-                    break;
+                if (chosenVehicle.Equals(vehicle))
+                {
+                    vehicle.SetAvailable(false);
+                }
             }
-            FileService.WriteToVehiclesFile(newVehicle.ToString());
+        }
+        public static void ReturnOutdatedRentsVehicle(List<Vehicle> vehiclesList, List<Renting> rentings)
+        {
+            foreach (var renting in rentings)
+            {
+                foreach (var vehicle in vehiclesList)
+                {
+                    if (vehicle.Equals(renting._vehicle) & renting._returnDate >= DateTime.Today)
+                    {
+                        vehicle.SetAvailable(true);
+                    }
+                }
+            }
+        }
+        public static void CreateVehicle(string type, string productionYear, double odometer, List<Vehicle> vehiclesList)
+        {
+            Vehicle newVehicle = type switch
+            {
+                "Normal" => new Normal(productionYear, odometer),
+                "Muscle" => new Muscle(productionYear, odometer),
+                "PickUp" => new PickUp(productionYear, odometer),
+                _ => null
+            };
+            vehiclesList.Add(newVehicle);
         }
     }
 }

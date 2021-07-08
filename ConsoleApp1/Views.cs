@@ -8,13 +8,27 @@ using ConsoleApp1.services;
 
 namespace ConsoleApp1
 {
-    class Views
+    internal class Views
     {
-        public void MainMenu()
+        private List<Vehicle> _vehiclesList = new List<Vehicle>();
+        private List<Renting> _rentingsList = new List<Renting>();
+         
+
+         public void Start()
+         {
+             _vehiclesList = VehicleService.GetVehicles();
+             _rentingsList = RentingService.GetRentings();
+             Console.WriteLine("---------------Program Starting--------------");
+             VehicleService.ReturnOutdatedRentsVehicle(_vehiclesList, _rentingsList);
+             MainMenu();
+         }
+
+        private void MainMenu()
         {
+            Console.Clear();
             Console.WriteLine("Main Menu:\n" +
-                              "1.Rent a Car\n" +
-                              "2.Show Renting List\n" +
+                              "1.Rent a Vehicle\n" +
+                              "2.Show available vehicles\n" +
                               "3.Admin Profile\n" +
                               "4.Quit\n" +
                               "Select your choice by typing a number");
@@ -24,7 +38,7 @@ namespace ConsoleApp1
                     RentMenu();
                     break;
                 case "2":
-                    RentingList();
+                    DisplayAvailableVehicles();
                     break;
                 case "3":
                     AdminMenu();
@@ -32,45 +46,82 @@ namespace ConsoleApp1
                 case "4":
                     Quit();
                     break;
+                default:
+                    MainMenu();
+                    break;
             }
         }
 //-----------------RENTING MENU
         private void RentMenu()
         {
-            Console.WriteLine("---------------Renting Process--------------");
-            var client = InputClientData();
-            var clientVehicleTypeChoice = VehicleTypeChoice();
-            var clientVehicleChoice = GetAvailableVehicleOfTypeChoice(clientVehicleTypeChoice);
-            var clientVehicleRentingDate = ClientVehicleRentingDateInput();
-            var clientVehicleReturnDate = ClientVehicleReturnDateInput();
-            RentingService.CreateRenting(client, clientVehicleChoice,clientVehicleRentingDate, clientVehicleReturnDate);
             Console.Clear();
+            Console.WriteLine("---------------Renting Process--------------");
+            Client client = CreateClient();
+            string clientVehicleTypeChoice = ChoseVehicleType();
+            Vehicle clientVehicleOfChoice = GetAvailableVehicleOfTypeChoice(clientVehicleTypeChoice);
+            DateTime clientVehicleRentingDate = ClientVehicleRentingDateInput();
+            DateTime clientVehicleReturnDate = ClientVehicleReturnDateInput(clientVehicleRentingDate);
+            clientVehicleOfChoice.SetAvailable(false);
+            Renting renting = RentingService.CreateRenting(client, clientVehicleOfChoice,clientVehicleRentingDate, clientVehicleReturnDate, _rentingsList);
+            Console.WriteLine("You borrowed a Vehicle:" + renting + "\n" +
+                              "This will cost you: " + renting._rentingCost);
+            FileService.WriteToRentingsFile(_rentingsList);
+            FileService.WriteToVehiclesFile(_vehiclesList);
+            Console.WriteLine("Click ENTER");
+            Console.ReadLine();
             MainMenu();
         }
 
-        private Client InputClientData()
+        private Client CreateClient()
         {
+            Console.Clear();
             Console.WriteLine("Input your name:");
             var clientName = Console.ReadLine();
             Console.WriteLine("Input your surname:");
             var clientSurname = Console.ReadLine();
             return ClientService.CreateClient(clientName, clientSurname);
-            
         }
 
-        private string VehicleTypeChoice()
+        private string ChoseVehicleType()
         {
-            Console.WriteLine("Choose type of ca you want to rent\n" +
+            Console.Clear();
+            Console.WriteLine("Choose type of vehicle you want to rent\n" +
                               "1.Normal Car\n" +
                               "2.Muscle Car\n" +
                               "3.Pick-Up Truck");
-            return Console.ReadLine() switch
+            switch (Console.ReadLine())
             {
-                "1" => "Normal",
-                "2" => "Muscle",
-                "3" => "PickUp",
-                _ => VehicleTypeChoice()
-            };
+                case "1":
+                    return "Normal";
+                case "2":
+                    return "Muscle";
+                case "3":
+                    return "PickUp";
+                default:
+                    return ChoseVehicleType();
+            }
+        }
+        private Vehicle GetAvailableVehicleOfTypeChoice(string clientVehicleTypeChoice)
+        {
+            List<Vehicle> availableVehiclesOfChoosenTypeList = VehicleService.GetAvailableVehiclesOfChoosenType(clientVehicleTypeChoice, _vehiclesList);
+
+            if (!availableVehiclesOfChoosenTypeList.Any())
+            {
+                Console.WriteLine("We are truly Sorry but we dont have available vehicles of your choice right now.\n" +
+                                  "Now you will be moved to the main menu.");
+                Console.ReadLine();
+                MainMenu();
+            }
+            Console.Clear();
+            Console.WriteLine("------Vehicles of chosen type:");
+            for (int i = 1; i < availableVehiclesOfChoosenTypeList.Count + 1; i++)
+            {
+                Console.WriteLine(i+ ". " + availableVehiclesOfChoosenTypeList[i-1].ToString());
+            }
+            Console.WriteLine("Choose the car by typing its number");
+            var clientVehicleChoice = int.Parse(Console.ReadLine());
+            var choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
+            return choosenVehicle;
         }
 
         private DateTime ClientVehicleRentingDateInput()
@@ -81,7 +132,7 @@ namespace ConsoleApp1
             DateTime rentingDate;
             try
             {
-                rentingDate = DateTime.Parse(dateAsString!);
+                rentingDate = DateTime.ParseExact(dateAsString!, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
             catch (FormatException)
             {
@@ -91,7 +142,7 @@ namespace ConsoleApp1
             return rentingDate;
         }
 
-        private DateTime ClientVehicleReturnDateInput()
+        private DateTime ClientVehicleReturnDateInput(DateTime clientVehicleRentingDate)
         {
             Console.WriteLine("When do you want to return the car\n" +
                               "USE YYYY-MM-DD Format");
@@ -99,42 +150,28 @@ namespace ConsoleApp1
             DateTime returnDate;
             try
             {
-                returnDate = DateTime.Parse(dateAsString!);
+                returnDate = DateTime.ParseExact(dateAsString!, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                if (clientVehicleRentingDate > returnDate)
+                {
+                    Console.WriteLine("Return date is earlier than renting date!");
+                    return ClientVehicleReturnDateInput(clientVehicleRentingDate);
+                }
             }
             catch (FormatException)
             {
                 Console.WriteLine("Unable to convert your input");
-                return ClientVehicleReturnDateInput();
+                return ClientVehicleReturnDateInput(clientVehicleRentingDate);
             }
             return returnDate;
         }
-        private Vehicle GetAvailableVehicleOfTypeChoice(string clientVehicleTypeChoice)
-        {
-            List<Vehicle> availableVehiclesOfChoosenTypeList = VehicleService.GetAvailableVehiclesOfChoosenType(clientVehicleTypeChoice);
 
-            if (availableVehiclesOfChoosenTypeList.Any())
-            {
-                Console.WriteLine("We are truly Sorry but we dont have available vehicles of your choice right now.\n" +
-                                  "Now you will be moved to the main menu.");
-                MainMenu();
-            }
-            Console.WriteLine("Choose the car by typing its number");
-            for (int i = 1; i < availableVehiclesOfChoosenTypeList.Count + 1; i++)
-            {
-                Console.WriteLine(i+ ". " + availableVehiclesOfChoosenTypeList[i-1].ToString());
-            }
-        
-            var clientVehicleChoice = int.Parse(Console.ReadLine());
-            var choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
-            return choosenVehicle;
-        }
-        
 //-----------------RENTING LIST DISPLAYING
-        private void RentingList()
+        private void DisplayAvailableVehicles()
         {
+            Console.Clear();
             Console.WriteLine("---------------Renting List Downloading--------------");
-            var lines = FileService.ReadRentingsFile();
-            foreach (var line in lines) Console.WriteLine(line);
+            var availableVehicles = VehicleService.GetAvailableVehicles(_vehiclesList);
+            foreach (var line in availableVehicles) Console.WriteLine(line.ToString());
             Console.WriteLine("CLICK ENTER");
             Console.ReadLine();
             MainMenu();
@@ -143,6 +180,7 @@ namespace ConsoleApp1
 
         private void AdminMenu()
         {
+            Console.Clear();
             Console.WriteLine("Welcome in ADMIN MENU\n" +
                               "Make a choice by typing a number below.\n" +
                               "1.Display rentings\n" +
@@ -150,26 +188,46 @@ namespace ConsoleApp1
             switch (Console.ReadLine())
             {
                 case "1":
-                    Console.WriteLine("NOT AVAILABLE YET");
-                    MainMenu();
+                    Console.Clear();
+                    DisplayRentings();
                     break;
                 case "2":
+                    Console.Clear();
                     CreateVehicle();
                     break;
             }
         }
 
+        private void DisplayRentings()
+        {
+            Console.Clear();
+            if (!_rentingsList.Any())
+            {
+                Console.WriteLine("NO ITEMS TO DISPLAY");
+                Console.ReadLine();
+                AdminMenu();
+            }
+            foreach (var renting in _rentingsList)
+            {
+                Console.WriteLine(renting.ToString());
+            }
+            Console.WriteLine("CLICK ENTER");
+            Console.ReadLine();
+            MainMenu();
+        }
         private void CreateVehicle()
         {
-            var vehicleTypeChoice = VehicleTypeChoice();
+            var vehicleTypeChoice = ChoseVehicleType();
             var productionYear = ProductionYearInput();
             var odometer = OdometerInput();
-            VehicleService.CreateVehicle(vehicleTypeChoice, productionYear, odometer);
+            VehicleService.CreateVehicle(vehicleTypeChoice, productionYear, odometer, _vehiclesList);
+            FileService.WriteToVehiclesFile(_vehiclesList);
             MainMenu();
         }
 
         private string ProductionYearInput()
         {
+            Console.Clear();
             Console.WriteLine("Input production year:");
             var productionYearAsString =Console.ReadLine();
             double productionYear;
@@ -193,6 +251,7 @@ namespace ConsoleApp1
         
         private double OdometerInput()
         {
+            Console.Clear();
             Console.WriteLine("Input actual value of odometer:");
             var odometerAsString =Console.ReadLine();
             double odometer;
@@ -217,7 +276,10 @@ namespace ConsoleApp1
 //-----------------QUIT
         private void Quit()
         {
+            Console.Clear();
             Console.WriteLine("---------------Quiting Process--------------");
+            FileService.WriteToVehiclesFile(_vehiclesList);
+            FileService.WriteToRentingsFile(_rentingsList);
             Environment.Exit(0);
         }
     }

@@ -61,15 +61,20 @@ namespace ConsoleApp1.objects
             Odometer = odometer;
             Available = true;
         }
-        protected Vehicle(double odometer)
-        {
-            ProductionDate = "2019";
-            Odometer = odometer;
-        }
 //-----------TO STRING-----------------------------------------
         public override string ToString()
         {
-            return GetType().Name + "_" + Brand + "_" + Model + "_" + Value + "_" + Depreciation + "_" + ProductionDate + "_" + Odometer + "_" + Available;
+            return GetType().Name + "_" + Brand + "_" + Model + "_" + ProductionDate + "_" + Value + "_" + Depreciation + "_" + Odometer + "_" + Available;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 //----------NORMAL----------------------------------------------

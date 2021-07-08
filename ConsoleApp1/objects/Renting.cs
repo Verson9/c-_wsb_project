@@ -4,11 +4,11 @@ namespace ConsoleApp1.objects
 {
     public class Renting
     {
-        private Client _client { get; }
-        private Vehicle _vehicle { get; }
-        private DateTime _rentingDate { get; }
-        private DateTime _returnDate { get; }
-        private double _rentingCost { get; } 
+        public Client _client { get; }
+        public Vehicle _vehicle { get; }
+        public DateTime _rentingDate { get; }
+        public DateTime _returnDate { get; }
+        public double _rentingCost { get; } 
 
         public Renting(Client client, Vehicle vehicle, DateTime rentingDate, DateTime returnDate, double rentingCost)
         {
@@ -21,8 +21,8 @@ namespace ConsoleApp1.objects
 
         public override string ToString()
         {
-            return _client.ToString() + "_" + _vehicle.ToString() + "_" + _rentingDate.ToString("YYYY-MM-DD") + "_" +
-                   _returnDate.ToString("YYYY-MM-DD") + "_" + _rentingCost;
+            return _client.ToString() + "_" + _vehicle.ToString() + "_" + _rentingDate.ToString("yyyy-MM-dd") + "_" +
+                   _returnDate.ToString("yyyy-MM-dd") + "_" + _rentingCost;
         }
     }
 }
