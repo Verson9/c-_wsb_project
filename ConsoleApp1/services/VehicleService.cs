@@ -75,7 +75,8 @@ namespace ConsoleApp1.services
             {
                 foreach (var vehicle in vehiclesList)
                 {
-                    if (vehicle.Equals(renting._vehicle) & renting._returnDate >= DateTime.Today)
+                    var vehicleFromRenting = renting._vehicle;
+                    if (vehicle.ToString().Equals(vehicleFromRenting.ToString()) & renting._returnDate <= DateTime.Today)
                     {
                         vehicle.SetAvailable(true);
                     }

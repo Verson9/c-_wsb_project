@@ -20,7 +20,7 @@ namespace ConsoleApp1.services
 
         public static void WriteToRentingsFile(string rentingsAsString)
         {
-            File.AppendAllText(RentingFilepath, rentingsAsString);
+            File.WriteAllText(RentingFilepath, rentingsAsString);
         }
 
         public static List<string> ReadVehiclesFile()

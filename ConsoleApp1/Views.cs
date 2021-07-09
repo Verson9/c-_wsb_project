@@ -19,6 +19,7 @@ namespace ConsoleApp1
             _rentingsList = RentingService.GetRentings();
             Console.WriteLine("---------------Program Starting--------------");
             VehicleService.ReturnOutdatedRentsVehicle(_vehiclesList, _rentingsList);
+            VehicleService.SaveVehicles(_vehiclesList);
             MainMenu();
         }
 
@@ -223,6 +224,9 @@ namespace ConsoleApp1
                 case "2":
                     Console.Clear();
                     CreateVehicleFromAdminMenu();
+                    break;
+                default:
+                    AdminMenu();
                     break;
             }
         }

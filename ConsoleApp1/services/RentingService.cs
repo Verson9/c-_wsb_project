@@ -17,7 +17,7 @@ namespace ConsoleApp1.services
                 foreach (var rentAsArray in rentingsListAsStrings.Select(rent => rent.Split("_")))
                 {
                     var client = new Client(rentAsArray[0], rentAsArray[1]);
-                    var productionDate = rentAsArray[7];
+                    var productionDate = rentAsArray[5];
                     var odometer = double.Parse(rentAsArray[8]);
                     var isAvailable = bool.Parse(rentAsArray[9]);
                     var rentingDate = DateTime.ParseExact(rentAsArray[10]!, "yyyy-MM-dd", CultureInfo.InvariantCulture);
