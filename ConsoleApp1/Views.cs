@@ -99,7 +99,8 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Input your surname:");
             var clientSurname = Console.ReadLine();
-            if (clientSurname.Any(char.IsDigit) || string.IsNullOrEmpty(clientSurname.Trim())) return InputClientSurname();
+            if (clientSurname.Any(char.IsDigit) || string.IsNullOrEmpty(clientSurname.Trim()))
+                return InputClientSurname();
 
             return clientSurname.Trim();
         }
@@ -147,7 +148,7 @@ namespace ConsoleApp1
             var clientVehicleChoice = chosenNumber();
             try
             {
-                Vehicle choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
+                var choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
                 return choosenVehicle;
             }
             catch (ArgumentOutOfRangeException)
@@ -159,15 +160,16 @@ namespace ConsoleApp1
         private int chosenNumber()
         {
             Console.WriteLine("Choose the car by typing its number");
-            int clientVehicleChoice = 0;
+            var clientVehicleChoice = 0;
             try
             {
                 clientVehicleChoice = int.Parse(Console.ReadLine());
             }
             catch (FormatException)
             {
-                 return chosenNumber();
+                return chosenNumber();
             }
+
             return clientVehicleChoice;
         }
 
