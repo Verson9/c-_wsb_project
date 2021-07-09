@@ -16,13 +16,8 @@ namespace ConsoleApp1.services
             return fileLines;
         }
 
-        public static void WriteToRentingsFile(List<Renting> rentingsList)
+        public static void WriteToRentingsFile(string rentingsAsString)
         {
-            string rentingsAsString = null;
-            foreach (var renting in rentingsList)
-            {
-                rentingsAsString = renting.ToString() + "\n";
-            }
             File.AppendAllText(RentingFilepath, rentingsAsString);
         }
         
@@ -32,13 +27,8 @@ namespace ConsoleApp1.services
             return fileLines;
         }
 
-        public static void WriteToVehiclesFile(List<Vehicle> vehiclesList)
+        public static void WriteToVehiclesFile(string vehiclesAsString)
         {
-            string vehiclesAsString = null;
-            foreach (var vehicle in vehiclesList)
-            {
-                vehiclesAsString = vehicle.ToString() + "\n";
-            }
             File.WriteAllText(VehiclesFilepath, vehiclesAsString);
         }
     }

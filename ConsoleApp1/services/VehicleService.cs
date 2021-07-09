@@ -12,27 +12,33 @@ namespace ConsoleApp1.services
         {
             var vehiclesListAsStrings = FileService.ReadVehiclesFile();
             var vehiclesList = new List<Vehicle>();
-            foreach (var vehicleDataAsString in vehiclesListAsStrings)
+            try
             {
-                var vehicleDataAsArray = vehicleDataAsString.Split("_");
-                var type = vehicleDataAsArray[0];
-                var brand = vehicleDataAsArray[1];
-                var model = vehicleDataAsArray[2];
-                var productionDate = vehicleDataAsArray[3];
-                var value = vehicleDataAsArray[4];
-                var depreciation = vehicleDataAsArray[5];
-                var odometer = vehicleDataAsArray[6];
-                var available = vehicleDataAsArray[7];
-                Vehicle vehicle = type switch
+                foreach (var vehicleDataAsString in vehiclesListAsStrings)
                 {
-                    "Normal" => new Normal(productionDate, double.Parse(odometer), Boolean.Parse(available)),
-                    "Muscle" => new Muscle(productionDate, double.Parse(odometer), Boolean.Parse(available)),
-                    "PickUp" => new PickUp(productionDate, double.Parse(odometer), Boolean.Parse(available)),
-                    _ => null
-                };
-                vehiclesList.Add(vehicle);
+                    var vehicleDataAsArray = vehicleDataAsString.Split("_");
+                    var type = vehicleDataAsArray[0];
+                    var brand = vehicleDataAsArray[1];
+                    var model = vehicleDataAsArray[2];
+                    var productionDate = vehicleDataAsArray[3];
+                    var value = vehicleDataAsArray[4];
+                    var depreciation = vehicleDataAsArray[5];
+                    var odometer = vehicleDataAsArray[6];
+                    var available = vehicleDataAsArray[7];
+                    Vehicle vehicle = type switch
+                    {
+                        "Normal" => new Normal(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                        "Muscle" => new Muscle(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                        "PickUp" => new PickUp(productionDate, double.Parse(odometer), Boolean.Parse(available)),
+                        _ => null
+                    };
+                    vehiclesList.Add(vehicle);
+                }
             }
-
+            catch (IndexOutOfRangeException)
+            {
+                return new List<Vehicle>();
+            }
             return vehiclesList;
         }
 
@@ -63,16 +69,6 @@ namespace ConsoleApp1.services
             return availableVehiclesOfChoosenType;
         }
 
-        public static void RentChosenVehicle(Vehicle chosenVehicle, List<Vehicle> vehiclesList)
-        {
-            foreach (var vehicle in vehiclesList)
-            {
-                if (chosenVehicle.Equals(vehicle))
-                {
-                    vehicle.SetAvailable(false);
-                }
-            }
-        }
         public static void ReturnOutdatedRentsVehicle(List<Vehicle> vehiclesList, List<Renting> rentings)
         {
             foreach (var renting in rentings)
@@ -96,6 +92,16 @@ namespace ConsoleApp1.services
                 _ => null
             };
             vehiclesList.Add(newVehicle);
+        }
+
+        public static void SaveVehicles(List<Vehicle>vehiclesList)
+        {
+            string vehiclesAsString = "";
+            foreach (var vehicle in vehiclesList)
+            {
+                vehiclesAsString += vehicle.ToString() + "\n";
+            }
+            FileService.WriteToVehiclesFile(vehiclesAsString);
         }
     }
 }
