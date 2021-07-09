@@ -144,10 +144,31 @@ namespace ConsoleApp1
             Console.WriteLine("------Vehicles of chosen type:");
             for (var i = 1; i < availableVehiclesOfChoosenTypeList.Count + 1; i++)
                 Console.WriteLine(i + ". " + availableVehiclesOfChoosenTypeList[i - 1]);
+            var clientVehicleChoice = chosenNumber();
+            try
+            {
+                Vehicle choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
+                return choosenVehicle;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return GetAvailableVehicleOfTypeChoice(clientVehicleTypeChoice);
+            }
+        }
+
+        private int chosenNumber()
+        {
             Console.WriteLine("Choose the car by typing its number");
-            var clientVehicleChoice = int.Parse(Console.ReadLine());
-            var choosenVehicle = availableVehiclesOfChoosenTypeList[clientVehicleChoice - 1];
-            return choosenVehicle;
+            int clientVehicleChoice = 0;
+            try
+            {
+                clientVehicleChoice = int.Parse(Console.ReadLine());
+            }
+            catch (FormatException)
+            {
+                 return chosenNumber();
+            }
+            return clientVehicleChoice;
         }
 
 //-----------------RENTING MENU---RENTING TIME
