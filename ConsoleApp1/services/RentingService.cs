@@ -80,8 +80,8 @@ namespace ConsoleApp1.services
             }
             // Gdy wynajem następuje przed okresem i kończy się w okresie
             if (rentingDate < startOfDiscount & 
-                 returnDate < endOfDiscount & 
-                 returnDate > startOfDiscount)
+                 returnDate <= endOfDiscount & 
+                 returnDate >= startOfDiscount)
             {
                 var rentingDaysBeforeDiscount = startOfDiscount.Subtract(rentingDate).TotalDays;
                 var rentingDaysInDiscount = returnDate.Subtract(startOfDiscount).TotalDays;
@@ -91,8 +91,8 @@ namespace ConsoleApp1.services
                 return totalCost;
             }
             // Gdy wynajem następuje w trakcie okresu okresu i kończy po okresie
-            if (rentingDate > startOfDiscount &
-                rentingDate < endOfDiscount &
+            if (rentingDate >= startOfDiscount &
+                rentingDate <= endOfDiscount &
                 returnDate > endOfDiscount)
             {
                 var rentingDaysInDiscount = endOfDiscount.Subtract(startOfDiscount).TotalDays;
@@ -103,10 +103,10 @@ namespace ConsoleApp1.services
                 return totalCost;
             }
             // Gdy wynajem następuje  w trakcie okresu i kończy w trakcie okresu
-            if (rentingDate > startOfDiscount & 
-                 rentingDate < endOfDiscount &
-                 returnDate > startOfDiscount &
-                 returnDate < endOfDiscount)
+            if (rentingDate >= startOfDiscount & 
+                 rentingDate <= endOfDiscount &
+                 returnDate >= startOfDiscount &
+                 returnDate <= endOfDiscount)
             {
                 var totalCost = rentingDays*dayCost*discount;
                 return totalCost;
@@ -125,7 +125,6 @@ namespace ConsoleApp1.services
                 var totalCost = beforeDiscountCost + inDiscountCost + afterDiscountCost;
                 return totalCost;
             }
-
             return 0;
         }
 
