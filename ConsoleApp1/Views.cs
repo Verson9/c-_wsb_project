@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ConsoleApp1.objects;
 using ConsoleApp1.services;
 
@@ -90,19 +91,17 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Input your name:");
             var clientName = Console.ReadLine();
-            if (clientName.Any(char.IsDigit) || string.IsNullOrEmpty(clientName.Trim())) return InputClientName();
-
-            return clientName.Trim();
+            if (Regex.IsMatch(clientName, @"^[a-zA-Z]+$")) return clientName.Trim();
+            return InputClientName();
         }
 
         private string InputClientSurname()
         {
             Console.WriteLine("Input your surname:");
             var clientSurname = Console.ReadLine();
-            if (clientSurname.Any(char.IsDigit) || string.IsNullOrEmpty(clientSurname.Trim()))
-                return InputClientSurname();
-
-            return clientSurname.Trim();
+            if (Regex.IsMatch(clientSurname, @"^[a-zA-Z]+$"))
+                return clientSurname.Trim();
+            return InputClientSurname();
         }
 
 //-----------------RENTING MENU---VEHICLE CHOICE
@@ -128,6 +127,7 @@ namespace ConsoleApp1
 
         private Vehicle GetAvailableVehicleOfTypeChoice(string clientVehicleTypeChoice)
         {
+            Console.Clear();
             var availableVehiclesOfChoosenTypeList =
                 VehicleService.GetAvailableVehiclesOfChoosenType(clientVehicleTypeChoice, _vehiclesList);
 
