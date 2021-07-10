@@ -6,7 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="bin\Debug\net6.0" />
       <Folder Include="tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="bin\Debug\net6.0\files\renting_data.txt" />
+      <None Include="bin\Debug\net6.0\files\vehicle_list.txt" />
     </ItemGroup>
 
 </Project>

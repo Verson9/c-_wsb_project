@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,15 +7,16 @@ namespace ConsoleApp1.services
 {
     public static class FileService
     {
-        private const string RentingFilepath =
-            @"C:\Users\przem\Desktop\C#\ConsoleApp1\ConsoleApp1\files\renting_data.txt";
+        private static string path = AppContext.BaseDirectory.ToString();
+        private static string RentingFilepath =
+            path +"files/renting_data.txt";
 
-        private const string VehiclesFilepath =
-            @"C:\Users\przem\Desktop\C#\ConsoleApp1\ConsoleApp1\files\vehicle_list.txt";
+        private static string VehiclesFilepath =
+            path + "files/vehicle_list.txt";
 
         public static List<string> ReadRentingsFile()
         {
-            var fileLines = File.ReadAllLines(RentingFilepath).ToList();
+            var fileLines = File.ReadAllLines("files/renting_data.txt").ToList();
             return fileLines;
         }
 
@@ -25,7 +27,7 @@ namespace ConsoleApp1.services
 
         public static List<string> ReadVehiclesFile()
         {
-            var fileLines = File.ReadAllLines(VehiclesFilepath).ToList();
+            var fileLines = File.ReadAllLines("files/vehicle_list.txt").ToList();
             return fileLines;
         }
 
