@@ -1,4 +1,4 @@
-bin/
+bin/Debug/net6.0/ref
 obj/
 /packages/
 riderModule.iml
